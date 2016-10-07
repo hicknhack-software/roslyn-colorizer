@@ -10,7 +10,8 @@ namespace SemanticColorizer
 {
     public static class CSharpExtensions
     {
-        public static SyntaxKind CSharpKind(this SyntaxNode node) {
+        public static SyntaxKind CSharpKind(this SyntaxNode node)
+        {
             return node.Kind();
         }
     }

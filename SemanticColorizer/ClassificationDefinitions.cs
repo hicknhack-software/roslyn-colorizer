@@ -57,5 +57,9 @@ namespace SemanticColorizer
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.TypeNormalFormat)]
         internal static ClassificationTypeDefinition TypeNormalType = null;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.EventFormat)]
+        internal static ClassificationTypeDefinition EventType = null;
     }
 }

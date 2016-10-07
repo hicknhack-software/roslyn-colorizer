@@ -25,7 +25,8 @@ namespace SemanticColorizer
         [Import]
         internal IClassificationTypeRegistryService ClassificationRegistry = null; // Set via MEF
 
-        public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+        public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
+        {
             return (ITagger<T>)new SemanticColorizer(buffer, ClassificationRegistry);
         }
     }
@@ -46,12 +47,14 @@ namespace SemanticColorizer
         private IClassificationType localType;
         private IClassificationType typeSpecialType;
         private IClassificationType typeNormalType;
+        private IClassificationType eventType;
         private Cache cache;
 #pragma warning disable CS0067
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 #pragma warning restore CS0067
 
-        internal SemanticColorizer(ITextBuffer buffer, IClassificationTypeRegistryService registry) {
+        internal SemanticColorizer(ITextBuffer buffer, IClassificationTypeRegistryService registry)
+        {
             theBuffer = buffer;
             fieldType = registry.GetClassificationType(Constants.FieldFormat);
             enumFieldType = registry.GetClassificationType(Constants.EnumFieldFormat);
@@ -66,13 +69,17 @@ namespace SemanticColorizer
             localType = registry.GetClassificationType(Constants.LocalFormat);
             typeSpecialType = registry.GetClassificationType(Constants.TypeSpecialFormat);
             typeNormalType = registry.GetClassificationType(Constants.TypeNormalFormat);
+            eventType = registry.GetClassificationType(Constants.EventFormat);
         }
 
-        public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-            if (spans.Count == 0) {
+        public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
+        {
+            if (spans.Count == 0)
+            {
                 return Enumerable.Empty<ITagSpan<IClassificationTag>>();
             }
-            if (this.cache == null || this.cache.Snapshot != spans[0].Snapshot) {
+            if (this.cache == null || this.cache.Snapshot != spans[0].Snapshot)
+            {
                 // this makes me feel dirty, but otherwise it will not
                 // work reliably, as TryGetSemanticModel() often will return false
                 // should make this into a completely async process somehow
@@ -87,7 +94,7 @@ namespace SemanticColorizer
                     return Enumerable.Empty<ITagSpan<IClassificationTag>>();
                 }
                 cache = task.Result;
-                if( cache == null)
+                if (cache == null)
                 {
                     // TODO: report this to someone.
                     return Enumerable.Empty<ITagSpan<IClassificationTag>>();
@@ -98,36 +105,45 @@ namespace SemanticColorizer
 
         private IEnumerable<ITagSpan<IClassificationTag>> GetTagsImpl(
               Cache doc,
-              NormalizedSnapshotSpanCollection spans) {
+              NormalizedSnapshotSpanCollection spans)
+        {
             var snapshot = spans[0].Snapshot;
 
             IEnumerable<ClassifiedSpan> identifiers =
               GetIdentifiersInSpans(doc.Workspace, doc.SemanticModel, spans);
 
-            foreach (var id in identifiers) {
+            foreach (var id in identifiers)
+            {
                 var node = GetExpression(doc.SyntaxRoot.FindNode(id.TextSpan));
                 var symbol = doc.SemanticModel.GetSymbolInfo(node).Symbol;
                 if (symbol == null) symbol = doc.SemanticModel.GetDeclaredSymbol(node);
-                if (symbol == null) {
+                if (symbol == null)
+                {
                     continue;
                 }
-                switch (symbol.Kind) {
+                switch (symbol.Kind)
+                {
                     case SymbolKind.Field:
-                        if (symbol.ContainingType.TypeKind != TypeKind.Enum) {
+                        if (symbol.ContainingType.TypeKind != TypeKind.Enum)
+                        {
                             yield return id.TextSpan.ToTagSpan(snapshot, fieldType);
                         }
-                        else {
+                        else
+                        {
                             yield return id.TextSpan.ToTagSpan(snapshot, enumFieldType);
                         }
                         break;
                     case SymbolKind.Method:
-                        if (IsExtensionMethod(symbol)) {
+                        if (IsExtensionMethod(symbol))
+                        {
                             yield return id.TextSpan.ToTagSpan(snapshot, extensionMethodType);
                         }
-                        else if (symbol.IsStatic) {
+                        else if (symbol.IsStatic)
+                        {
                             yield return id.TextSpan.ToTagSpan(snapshot, staticMethodType);
                         }
-                        else {
+                        else
+                        {
                             yield return id.TextSpan.ToTagSpan(snapshot, normalMethodType);
                         }
                         break;
@@ -147,35 +163,46 @@ namespace SemanticColorizer
                         yield return id.TextSpan.ToTagSpan(snapshot, localType);
                         break;
                     case SymbolKind.NamedType:
-                        if (isSpecialType(symbol)) {
+                        if (IsSpecialType(symbol))
+                        {
                             yield return id.TextSpan.ToTagSpan(snapshot, typeSpecialType);
                         }
-                        else {
+                        else
+                        {
                             yield return id.TextSpan.ToTagSpan(snapshot, typeNormalType);
                         }
+                        break;
+                    case SymbolKind.Event:
+                        yield return id.TextSpan.ToTagSpan(snapshot, eventType);
                         break;
                 }
             }
         }
 
-        private bool isSpecialType(ISymbol symbol) {
+        private bool IsSpecialType(ISymbol symbol)
+        {
             var type = (INamedTypeSymbol)symbol;
             return type.SpecialType != SpecialType.None;
         }
 
-        private bool IsExtensionMethod(ISymbol symbol) {
+        private bool IsExtensionMethod(ISymbol symbol)
+        {
             var method = (IMethodSymbol)symbol;
             return method.IsExtensionMethod;
         }
 
-        private SyntaxNode GetExpression(SyntaxNode node) {
-            if (node.CSharpKind() == CSharp.SyntaxKind.Argument) {
+        private SyntaxNode GetExpression(SyntaxNode node)
+        {
+            if (node.CSharpKind() == CSharp.SyntaxKind.Argument)
+            {
                 return ((CSharp.Syntax.ArgumentSyntax)node).Expression;
             }
-            else if (node.CSharpKind() == CSharp.SyntaxKind.AttributeArgument) {
+            else if (node.CSharpKind() == CSharp.SyntaxKind.AttributeArgument)
+            {
                 return ((CSharp.Syntax.AttributeArgumentSyntax)node).Expression;
             }
-            else if (node.VBKind() == VB.SyntaxKind.SimpleArgument) {
+            else if (node.VBKind() == VB.SyntaxKind.SimpleArgument)
+            {
                 return ((VB.Syntax.SimpleArgumentSyntax)node).Expression;
             }
             return node;
@@ -183,10 +210,12 @@ namespace SemanticColorizer
 
         private IEnumerable<ClassifiedSpan> GetIdentifiersInSpans(
               Workspace workspace, SemanticModel model,
-              NormalizedSnapshotSpanCollection spans) {
+              NormalizedSnapshotSpanCollection spans)
+        {
             var comparer = StringComparer.InvariantCultureIgnoreCase;
             var classifiedSpans =
-              spans.SelectMany(span => {
+              spans.SelectMany(span =>
+              {
                   var textSpan = TextSpan.FromBounds(span.Start, span.End);
                   return Classifier.GetClassifiedSpans(model, textSpan, workspace);
               });
@@ -204,9 +233,10 @@ namespace SemanticColorizer
             public SyntaxNode SyntaxRoot { get; private set; }
             public ITextSnapshot Snapshot { get; private set; }
 
-            private Cache() {}
+            private Cache() { }
 
-            public static async Task<Cache> Resolve(ITextBuffer buffer, ITextSnapshot snapshot) {
+            public static async Task<Cache> Resolve(ITextBuffer buffer, ITextSnapshot snapshot)
+            {
                 var workspace = buffer.GetWorkspace();
                 var document = snapshot.GetOpenDocumentInCurrentContextWithChanges();
                 if (document == null)
@@ -219,7 +249,8 @@ namespace SemanticColorizer
                 // otherwise we'll deadlock VS
                 var semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
-                return new Cache {
+                return new Cache
+                {
                     Workspace = workspace,
                     Document = document,
                     SemanticModel = semanticModel,
