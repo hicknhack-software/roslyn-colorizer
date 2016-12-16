@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -8,6 +9,8 @@ using Microsoft.VisualStudio.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CSharp = Microsoft.CodeAnalysis.CSharp;
@@ -46,6 +49,9 @@ namespace SemanticColorizer
         private IClassificationType localType;
         private IClassificationType typeSpecialType;
         private IClassificationType typeNormalType;
+
+        private IClassificationType typeClassType;
+        private IClassificationType typeStructType;
         private Cache cache;
 #pragma warning disable CS0067
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -66,6 +72,8 @@ namespace SemanticColorizer
             localType = registry.GetClassificationType(Constants.LocalFormat);
             typeSpecialType = registry.GetClassificationType(Constants.TypeSpecialFormat);
             typeNormalType = registry.GetClassificationType(Constants.TypeNormalFormat);
+            typeClassType = registry.GetClassificationType(Constants.TypeClassFormat);
+            typeStructType = registry.GetClassificationType(Constants.TypeStructFormat);
         }
 
         public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
@@ -87,7 +95,7 @@ namespace SemanticColorizer
                     return Enumerable.Empty<ITagSpan<IClassificationTag>>();
                 }
                 cache = task.Result;
-                if( cache == null)
+                if (cache == null)
                 {
                     // TODO: report this to someone.
                     return Enumerable.Empty<ITagSpan<IClassificationTag>>();
@@ -100,6 +108,7 @@ namespace SemanticColorizer
               Cache doc,
               NormalizedSnapshotSpanCollection spans) {
             var snapshot = spans[0].Snapshot;
+            var comparer = StringComparer.InvariantCultureIgnoreCase;
 
             IEnumerable<ClassifiedSpan> identifiers =
               GetIdentifiersInSpans(doc.Workspace, doc.SemanticModel, spans);
@@ -111,61 +120,64 @@ namespace SemanticColorizer
                 if (symbol == null) {
                     continue;
                 }
-                switch (symbol.Kind) {
-                    case SymbolKind.Field:
-                        if (symbol.ContainingType.TypeKind != TypeKind.Enum) {
-                            yield return id.TextSpan.ToTagSpan(snapshot, fieldType);
-                        }
-                        else {
-                            yield return id.TextSpan.ToTagSpan(snapshot, enumFieldType);
-                        }
-                        break;
-                    case SymbolKind.Method:
-                        if (IsExtensionMethod(symbol)) {
-                            yield return id.TextSpan.ToTagSpan(snapshot, extensionMethodType);
-                        }
-                        else if (symbol.IsStatic) {
-                            yield return id.TextSpan.ToTagSpan(snapshot, staticMethodType);
-                        }
-                        else {
-                            yield return id.TextSpan.ToTagSpan(snapshot, normalMethodType);
-                        }
-                        break;
-                    case SymbolKind.TypeParameter:
-                        yield return id.TextSpan.ToTagSpan(snapshot, typeParameterType);
-                        break;
-                    case SymbolKind.Parameter:
-                        yield return id.TextSpan.ToTagSpan(snapshot, parameterType);
-                        break;
-                    case SymbolKind.Namespace:
-                        yield return id.TextSpan.ToTagSpan(snapshot, namespaceType);
-                        break;
-                    case SymbolKind.Property:
-                        yield return id.TextSpan.ToTagSpan(snapshot, propertyType);
-                        break;
-                    case SymbolKind.Local:
-                        yield return id.TextSpan.ToTagSpan(snapshot, localType);
-                        break;
-                    case SymbolKind.NamedType:
-                        if (isSpecialType(symbol)) {
-                            yield return id.TextSpan.ToTagSpan(snapshot, typeSpecialType);
-                        }
-                        else {
-                            yield return id.TextSpan.ToTagSpan(snapshot, typeNormalType);
-                        }
-                        break;
+
+                if (id.ClassificationType.Equals("identifier")) {
+                    switch (symbol.Kind) {
+                        case SymbolKind.Field:
+                            if (symbol.ContainingType.TypeKind != TypeKind.Enum) {
+                                yield return id.TextSpan.ToTagSpan(snapshot, fieldType);
+                            }
+                            else {
+                                yield return id.TextSpan.ToTagSpan(snapshot, enumFieldType);
+                            }
+                            break;
+                        case SymbolKind.Method:
+                            var method = (IMethodSymbol)symbol;
+                            if (method.IsExtensionMethod) {
+                                yield return id.TextSpan.ToTagSpan(snapshot, extensionMethodType);
+                            }
+                            else if (symbol.IsStatic) {
+                                yield return id.TextSpan.ToTagSpan(snapshot, staticMethodType);
+                            }
+                            else {
+                                yield return id.TextSpan.ToTagSpan(snapshot, normalMethodType);
+                            }
+                            break;
+                        case SymbolKind.TypeParameter:
+                            yield return id.TextSpan.ToTagSpan(snapshot, typeParameterType);
+                            break;
+                        case SymbolKind.Parameter:
+                            yield return id.TextSpan.ToTagSpan(snapshot, parameterType);
+                            break;
+                        case SymbolKind.Namespace:
+                            yield return id.TextSpan.ToTagSpan(snapshot, namespaceType);
+                            break;
+                        case SymbolKind.Property:
+                            yield return id.TextSpan.ToTagSpan(snapshot, propertyType);
+                            break;
+                        case SymbolKind.Local:
+                            yield return id.TextSpan.ToTagSpan(snapshot, localType);
+                            break;
+                    }
+                }
+                if (id.ClassificationType.Equals("keyword")) {
+                    switch (symbol.Kind) {
+                        case SymbolKind.NamedType:
+                            if (node is PredefinedTypeSyntax) {
+                                var type = (INamedTypeSymbol)symbol;
+                                if (type.Name.Equals("Void"))
+                                    continue;
+                                if (type.TypeKind == TypeKind.Struct) {
+                                    yield return id.TextSpan.ToTagSpan(snapshot, typeStructType);
+                                }
+                                if (type.TypeKind == TypeKind.Class) {
+                                    yield return id.TextSpan.ToTagSpan(snapshot, typeClassType);
+                                }
+                            }
+                            break;
+                    }
                 }
             }
-        }
-
-        private bool isSpecialType(ISymbol symbol) {
-            var type = (INamedTypeSymbol)symbol;
-            return type.SpecialType != SpecialType.None;
-        }
-
-        private bool IsExtensionMethod(ISymbol symbol) {
-            var method = (IMethodSymbol)symbol;
-            return method.IsExtensionMethod;
         }
 
         private SyntaxNode GetExpression(SyntaxNode node) {
@@ -191,9 +203,7 @@ namespace SemanticColorizer
                   return Classifier.GetClassifiedSpans(model, textSpan, workspace);
               });
 
-            return from cs in classifiedSpans
-                   where comparer.Compare(cs.ClassificationType, "identifier") == 0
-                   select cs;
+            return classifiedSpans;
         }
 
         private class Cache
