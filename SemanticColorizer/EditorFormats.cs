@@ -13,8 +13,8 @@ namespace SemanticColorizer
     internal sealed class SemanticFieldFormat : ClassificationFormatDefinition
     {
         public SemanticFieldFormat() {
-            this.DisplayName = "Semantic Field";
-            this.ForegroundColor = Colors.SaddleBrown;
+            DisplayName = "Semantic Field";
+            ForegroundColor = Colors.SaddleBrown;
         }
     }
 
@@ -26,7 +26,7 @@ namespace SemanticColorizer
     internal sealed class SemanticEnumFieldFormat : ClassificationFormatDefinition
     {
         public SemanticEnumFieldFormat() {
-            this.DisplayName = "Semantic Enum Field";
+            DisplayName = "Semantic Enum Field";
         }
     }
 
@@ -38,8 +38,8 @@ namespace SemanticColorizer
     internal sealed class SemanticExtensionMethodFormat : ClassificationFormatDefinition
     {
         public SemanticExtensionMethodFormat() {
-            this.DisplayName = "Semantic Extension Method";
-            this.IsItalic = true;
+            DisplayName = "Semantic Extension Method";
+            IsItalic = true;
         }
     }
 
@@ -51,7 +51,7 @@ namespace SemanticColorizer
     internal sealed class SemanticStaticMethodFormat : ClassificationFormatDefinition
     {
         public SemanticStaticMethodFormat() {
-            this.DisplayName = "Semantic Static Method";
+            DisplayName = "Semantic Static Method";
         }
     }
 
@@ -63,7 +63,7 @@ namespace SemanticColorizer
     internal sealed class SemanticNormalMethodFormat : ClassificationFormatDefinition
     {
         public SemanticNormalMethodFormat() {
-            this.DisplayName = "Semantic Normal Method";
+            DisplayName = "Semantic Normal Method";
         }
     }
 
@@ -75,7 +75,7 @@ namespace SemanticColorizer
     internal sealed class SemanticConstructorFormat : ClassificationFormatDefinition
     {
         public SemanticConstructorFormat() {
-            this.DisplayName = "Semantic Constructor";
+            DisplayName = "Semantic Constructor";
         }
     }
 
@@ -87,8 +87,8 @@ namespace SemanticColorizer
     internal sealed class SemanticTypeParameterFormat : ClassificationFormatDefinition
     {
         public SemanticTypeParameterFormat() {
-            this.DisplayName = "Semantic Type Parameter";
-            this.ForegroundColor = Colors.SlateGray;
+            DisplayName = "Semantic Type Parameter";
+            ForegroundColor = Colors.SlateGray;
         }
     }
 
@@ -100,8 +100,8 @@ namespace SemanticColorizer
     internal sealed class SemanticParameterFormat : ClassificationFormatDefinition
     {
         public SemanticParameterFormat() {
-            this.DisplayName = "Semantic Parameter";
-            this.ForegroundColor = Colors.SlateGray;
+            DisplayName = "Semantic Parameter";
+            ForegroundColor = Colors.SlateGray;
         }
     }
 
@@ -113,8 +113,8 @@ namespace SemanticColorizer
     internal sealed class SemanticNamespaceFormat : ClassificationFormatDefinition
     {
         public SemanticNamespaceFormat() {
-            this.DisplayName = "Semantic Namespace";
-            this.ForegroundColor = Colors.LimeGreen;
+            DisplayName = "Semantic Namespace";
+            ForegroundColor = Colors.LimeGreen;
         }
     }
 
@@ -126,7 +126,7 @@ namespace SemanticColorizer
     internal sealed class SemanticPropertyFormat : ClassificationFormatDefinition
     {
         public SemanticPropertyFormat() {
-            this.DisplayName = "Semantic Property";
+            DisplayName = "Semantic Property";
         }
     }
 
@@ -138,7 +138,7 @@ namespace SemanticColorizer
     internal sealed class SemanticLocalFormat : ClassificationFormatDefinition
     {
         public SemanticLocalFormat() {
-            this.DisplayName = "Semantic Local";
+            DisplayName = "Semantic Local";
         }
     }
 
@@ -150,7 +150,7 @@ namespace SemanticColorizer
     internal sealed class SemanticTypeSpecialFormat : ClassificationFormatDefinition
     {
         public SemanticTypeSpecialFormat() {
-            this.DisplayName = "Semantic Special Type";
+            DisplayName = "Semantic Special Type";
         }
     }
 
@@ -162,7 +162,7 @@ namespace SemanticColorizer
     internal sealed class SemanticTypeNormalFormat : ClassificationFormatDefinition
     {
         public SemanticTypeNormalFormat() {
-            this.DisplayName = "Semantic Normal Type";
+            DisplayName = "Semantic Normal Type";
         }
     }
 }

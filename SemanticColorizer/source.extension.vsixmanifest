@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="SemanticColorizer..675719A2-3029-4ADD-8A0C-912336B31716" Version="1.1" Language="en-US" Publisher="HicknHack Software GmbH" />
+    <Identity Id="SemanticColorizer..675719A2-3029-4ADD-8A0C-912336B31716" Version="1.2.1" Language="en-US" Publisher="HicknHack Software GmbH" />
     <DisplayName>SemanticColorizer</DisplayName>
     <Description xml:space="preserve">A semantic syntax classifier extension based on Roslyn for C# and Visual Basic.</Description>
     <MoreInfo>https://github.com/hicknhack-software/semantic-colorizer</MoreInfo>
@@ -12,12 +12,18 @@
     <Tags>Semantic Syntax Highlighting Color</Tags>
   </Metadata>
   <Installation>
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="14.0" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[14.0,16.0)" />
+    <InstallationTarget Version="[14.0,16.0)" Id="Microsoft.VisualStudio.Community" />
+    <InstallationTarget Version="[14.0,16.0)" Id="Microsoft.VisualStudio.Enterprise" />
   </Installation>
   <Dependencies>
-    <Dependency d:Source="Installed" Version="[1.0.0.50618,2.0)" Id="0b5e8ddb-f12d-4131-a71d-77acc26a798f" DisplayName="Roslyn Language Services" />
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.6,)" />
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
   </Assets>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[14.0,16.0)" DisplayName="Visual Studio core editor" />
+    <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.Compiler" Version="[14.0,16.0)" DisplayName="C# and Visual Basic Roslyn compilers" />
+  </Prerequisites>
 </PackageManifest>
