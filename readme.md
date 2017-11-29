@@ -6,7 +6,7 @@ A Visual Studio 2015 & 2017 editor extension for semantic syntax highlighting.
 
 It uses the Roslyn APIs to highlight the following syntax types in distinctive colors to make them easily recognizable.
 
-To change the colols use the regular Visual Studio "Font and Colors" Options. Look for `Semantic *` in the "Display items".
+To change the colors use the regular Visual Studio "Font and Colors" Options. Look for `Semantic *` in the "Display items".
 
 * Class fields
 * Enum fields
