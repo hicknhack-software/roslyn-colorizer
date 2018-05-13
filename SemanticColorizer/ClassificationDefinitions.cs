@@ -28,6 +28,10 @@ namespace SemanticColorizer
         internal static ClassificationTypeDefinition NormalMethodType;
 
         [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.LocalFunctionFormat)]
+        internal static ClassificationTypeDefinition LocalFunctionType;
+
+        [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.ConstructorFormat)]
         internal static ClassificationTypeDefinition ConstructorType;
 
@@ -52,12 +56,28 @@ namespace SemanticColorizer
         internal static ClassificationTypeDefinition LocalType;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(Constants.TypeSpecialFormat)]
-        internal static ClassificationTypeDefinition TypeSpecialType;
+        [Name(Constants.ClassFormat)]
+        internal static ClassificationTypeDefinition ClassType;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(Constants.TypeNormalFormat)]
-        internal static ClassificationTypeDefinition TypeNormalType;
+        [Name(Constants.InterfaceFormat)]
+        internal static ClassificationTypeDefinition InterfaceType;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.EnumFormat)]
+        internal static ClassificationTypeDefinition EnumType;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.StructFormat)]
+        internal static ClassificationTypeDefinition StructType;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.EventFormat)]
+        internal static ClassificationTypeDefinition EventType;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.DelegateFormat)]
+        internal static ClassificationTypeDefinition DelegateType;
 #pragma warning restore CS0649
     }
 }
