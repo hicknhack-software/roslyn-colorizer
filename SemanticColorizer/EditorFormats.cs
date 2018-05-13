@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.Composition;
-using System.Windows.Media;
+﻿using Microsoft.CodeAnalysis.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
+using System.ComponentModel.Composition;
+using System.Windows.Media;
 
 namespace SemanticColorizer
 {
@@ -9,10 +10,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.FieldFormat)]
     [Name(Constants.FieldFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticFieldFormat : ClassificationFormatDefinition
     {
-        public SemanticFieldFormat() {
+        public SemanticFieldFormat()
+        {
             DisplayName = "Semantic Field";
             ForegroundColor = Colors.SaddleBrown;
         }
@@ -22,10 +24,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.EnumFieldFormat)]
     [Name(Constants.EnumFieldFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticEnumFieldFormat : ClassificationFormatDefinition
     {
-        public SemanticEnumFieldFormat() {
+        public SemanticEnumFieldFormat()
+        {
             DisplayName = "Semantic Enum Field";
         }
     }
@@ -34,10 +37,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.ExtensionMethodFormat)]
     [Name(Constants.ExtensionMethodFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticExtensionMethodFormat : ClassificationFormatDefinition
     {
-        public SemanticExtensionMethodFormat() {
+        public SemanticExtensionMethodFormat()
+        {
             DisplayName = "Semantic Extension Method";
             IsItalic = true;
         }
@@ -47,10 +51,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.StaticMethodFormat)]
     [Name(Constants.StaticMethodFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticStaticMethodFormat : ClassificationFormatDefinition
     {
-        public SemanticStaticMethodFormat() {
+        public SemanticStaticMethodFormat()
+        {
             DisplayName = "Semantic Static Method";
         }
     }
@@ -59,10 +64,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.NormalMethodFormat)]
     [Name(Constants.NormalMethodFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticNormalMethodFormat : ClassificationFormatDefinition
     {
-        public SemanticNormalMethodFormat() {
+        public SemanticNormalMethodFormat()
+        {
             DisplayName = "Semantic Normal Method";
         }
     }
@@ -70,7 +76,7 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.LocalFunctionFormat)]
     [Name(Constants.LocalFunctionFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticLocalFunctionFormat : ClassificationFormatDefinition
     {
         public SemanticLocalFunctionFormat()
@@ -83,10 +89,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.ConstructorFormat)]
     [Name(Constants.ConstructorFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticConstructorFormat : ClassificationFormatDefinition
     {
-        public SemanticConstructorFormat() {
+        public SemanticConstructorFormat()
+        {
             DisplayName = "Semantic Constructor";
         }
     }
@@ -95,10 +102,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.TypeParameterFormat)]
     [Name(Constants.TypeParameterFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticTypeParameterFormat : ClassificationFormatDefinition
     {
-        public SemanticTypeParameterFormat() {
+        public SemanticTypeParameterFormat()
+        {
             DisplayName = "Semantic Type Parameter";
             ForegroundColor = Colors.SlateGray;
         }
@@ -108,10 +116,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.ParameterFormat)]
     [Name(Constants.ParameterFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticParameterFormat : ClassificationFormatDefinition
     {
-        public SemanticParameterFormat() {
+        public SemanticParameterFormat()
+        {
             DisplayName = "Semantic Parameter";
             ForegroundColor = Colors.SlateGray;
         }
@@ -121,10 +130,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.NamespaceFormat)]
     [Name(Constants.NamespaceFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticNamespaceFormat : ClassificationFormatDefinition
     {
-        public SemanticNamespaceFormat() {
+        public SemanticNamespaceFormat()
+        {
             DisplayName = "Semantic Namespace";
             ForegroundColor = Colors.LimeGreen;
         }
@@ -134,10 +144,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.PropertyFormat)]
     [Name(Constants.PropertyFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticPropertyFormat : ClassificationFormatDefinition
     {
-        public SemanticPropertyFormat() {
+        public SemanticPropertyFormat()
+        {
             DisplayName = "Semantic Property";
         }
     }
@@ -146,10 +157,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.LocalFormat)]
     [Name(Constants.LocalFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticLocalFormat : ClassificationFormatDefinition
     {
-        public SemanticLocalFormat() {
+        public SemanticLocalFormat()
+        {
             DisplayName = "Semantic Local";
         }
     }
@@ -158,10 +170,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.ClassFormat)]
     [Name(Constants.ClassFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticClassFormat : ClassificationFormatDefinition
     {
-        public SemanticClassFormat() {
+        public SemanticClassFormat()
+        {
             DisplayName = "Semantic Class";
         }
     }
@@ -170,10 +183,11 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.InterfaceFormat)]
     [Name(Constants.InterfaceFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticInterfaceFormat : ClassificationFormatDefinition
     {
-        public SemanticInterfaceFormat() {
+        public SemanticInterfaceFormat()
+        {
             DisplayName = "Semantic Interface";
         }
     }
@@ -182,7 +196,7 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.EventFormat)]
     [Name(Constants.EventFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticEventFormat : ClassificationFormatDefinition
     {
         public SemanticEventFormat()
@@ -195,7 +209,7 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.StructFormat)]
     [Name(Constants.StructFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticStructFormat : ClassificationFormatDefinition
     {
         public SemanticStructFormat()
@@ -208,7 +222,7 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.EnumFormat)]
     [Name(Constants.EnumFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticEnumFormat : ClassificationFormatDefinition
     {
         public SemanticEnumFormat()
@@ -221,7 +235,7 @@ namespace SemanticColorizer
     [ClassificationType(ClassificationTypeNames = Constants.DelegateFormat)]
     [Name(Constants.DelegateFormat)]
     [UserVisible(true)]
-    [Order(After = Priority.Default)]
+    [Order(After = ClassificationTypeNames.Identifier)]
     internal sealed class SemanticDelegateFormat : ClassificationFormatDefinition
     {
         public SemanticDelegateFormat()
