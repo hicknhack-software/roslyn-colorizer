@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Text.Classification;
+﻿using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
+using System.ComponentModel.Composition;
 
 namespace SemanticColorizer
 {
@@ -54,6 +54,10 @@ namespace SemanticColorizer
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.LocalFormat)]
         internal static ClassificationTypeDefinition LocalType;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.TypeSpecialFormat)]
+        internal static ClassificationTypeDefinition TypeSpecialType;
 
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.ClassFormat)]

@@ -167,6 +167,19 @@ namespace SemanticColorizer
     }
 
     [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = Constants.TypeSpecialFormat)]
+    [Name(Constants.TypeSpecialFormat)]
+    [UserVisible(true)]
+    [Order(After = ClassificationTypeNames.Identifier)]
+    internal sealed class SemanticTypeSpecialFormat : ClassificationFormatDefinition
+    {
+        public SemanticTypeSpecialFormat()
+        {
+            DisplayName = "Semantic Special Type";
+        }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.ClassFormat)]
     [Name(Constants.ClassFormat)]
     [UserVisible(true)]
