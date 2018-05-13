@@ -49,6 +49,7 @@ namespace SemanticColorizer
         private readonly IClassificationType _namespaceType;
         private readonly IClassificationType _propertyType;
         private readonly IClassificationType _localType;
+        private readonly IClassificationType _typeSpecialType;
         private readonly IClassificationType _eventType;
         private readonly IClassificationType _classType;
         private readonly IClassificationType _structType;
@@ -60,27 +61,41 @@ namespace SemanticColorizer
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 #pragma warning restore CS0067
 
+        static class NewClassificationTypeNames
+        {
+            public const string PropertyName = "property name";
+            public const string EventName = "event name";
+            public const string ExtensionMethodName = "extension method name";
+            public const string MethodName = "method name";
+            public const string ParameterName = "parameter name";
+            public const string LocalName = "local name";
+            public const string FieldName = "field name";
+            public const string EnumMemberName = "enum member name";
+            public const string ConstantName = "constant name";
+        }
+        public const MethodKind LocalMethodKind = (MethodKind)17;
+
         static SemanticColorizer()
         {
             SupportedClassificationTypeNames = new List<string>
             {
                 ClassificationTypeNames.ClassName,
                 ClassificationTypeNames.StructName,
-                ClassificationTypeNames.FieldName,
-                ClassificationTypeNames.PropertyName,
+                NewClassificationTypeNames.FieldName,
+                NewClassificationTypeNames.PropertyName,
                 ClassificationTypeNames.InterfaceName,
                 ClassificationTypeNames.DelegateName,
                 ClassificationTypeNames.EnumName,
-                ClassificationTypeNames.EnumMemberName,
+                NewClassificationTypeNames.EnumMemberName,
                 ClassificationTypeNames.Keyword,
                 ClassificationTypeNames.Identifier,
-                ClassificationTypeNames.EventName,
-                ClassificationTypeNames.LocalName,
-                ClassificationTypeNames.ParameterName,
-                ClassificationTypeNames.ExtensionMethodName,
-                ClassificationTypeNames.ConstantName,
+                NewClassificationTypeNames.EventName,
+                NewClassificationTypeNames.LocalName,
+                NewClassificationTypeNames.ParameterName,
+                NewClassificationTypeNames.ExtensionMethodName,
+                NewClassificationTypeNames.ConstantName,
                 ClassificationTypeNames.TypeParameterName,
-                ClassificationTypeNames.MethodName
+                NewClassificationTypeNames.MethodName
             };
         }
 
@@ -99,6 +114,7 @@ namespace SemanticColorizer
             _namespaceType = registry.GetClassificationType(Constants.NamespaceFormat);
             _propertyType = registry.GetClassificationType(Constants.PropertyFormat);
             _localType = registry.GetClassificationType(Constants.LocalFormat);
+            _typeSpecialType = registry.GetClassificationType(Constants.TypeSpecialFormat);
             _eventType = registry.GetClassificationType(Constants.EventFormat);
             _classType = registry.GetClassificationType(Constants.ClassFormat);
             _structType = registry.GetClassificationType(Constants.StructFormat);
@@ -161,10 +177,10 @@ namespace SemanticColorizer
                     case SymbolKind.Field:
                         switch (span.ClassificationType)
                         {
-                            case ClassificationTypeNames.FieldName:
+                            case NewClassificationTypeNames.FieldName:
                                 yield return span.TextSpan.ToTagSpan(snapshot, _fieldType);
                                 break;
-                            case ClassificationTypeNames.EnumMemberName:
+                            case NewClassificationTypeNames.EnumMemberName:
                                 yield return span.TextSpan.ToTagSpan(snapshot, _enumFieldType);
                                 break;
                         }
@@ -179,17 +195,21 @@ namespace SemanticColorizer
                                     yield return span.TextSpan.ToTagSpan(snapshot, _constructorType);
                                 }
                                 //local function definition
-                                if (methodSymbol.MethodKind == MethodKind.LocalFunction)
+                                else if (methodSymbol.MethodKind == LocalMethodKind)
                                 {
                                     yield return span.TextSpan.ToTagSpan(snapshot, _localFunctionType);
                                 }
+                                else if (methodSymbol.IsExtensionMethod)
+                                {
+                                    yield return span.TextSpan.ToTagSpan(snapshot, _extensionMethodType);
+                                }
                                 break;
-                            case ClassificationTypeNames.ExtensionMethodName:
+                            case NewClassificationTypeNames.ExtensionMethodName:
                                 yield return span.TextSpan.ToTagSpan(snapshot, _extensionMethodType);
                                 break;
-                            case ClassificationTypeNames.MethodName:
+                            case NewClassificationTypeNames.MethodName:
                                 //local function call
-                                if (methodSymbol.MethodKind == MethodKind.LocalFunction)
+                                if (methodSymbol.MethodKind == LocalMethodKind)
                                 {
                                     yield return span.TextSpan.ToTagSpan(snapshot, _localFunctionType);
                                 }
@@ -228,27 +248,40 @@ namespace SemanticColorizer
                         yield return span.TextSpan.ToTagSpan(snapshot, _eventType);
                         break;
                     case SymbolKind.NamedType:
-                        switch (span.ClassificationType)
+                        if (IsSpecialType(symbol))
                         {
-                            case ClassificationTypeNames.StructName:
-                                yield return span.TextSpan.ToTagSpan(snapshot, _structType);
-                                break;
-                            case ClassificationTypeNames.ClassName:
-                                yield return span.TextSpan.ToTagSpan(snapshot, _classType);
-                                break;
-                            case ClassificationTypeNames.InterfaceName:
-                                yield return span.TextSpan.ToTagSpan(snapshot, _interfaceType);
-                                break;
-                            case ClassificationTypeNames.DelegateName:
-                                yield return span.TextSpan.ToTagSpan(snapshot, _delegateType);
-                                break;
-                            case ClassificationTypeNames.EnumName:
-                                yield return span.TextSpan.ToTagSpan(snapshot, _enumType);
-                                break;
+                            yield return span.TextSpan.ToTagSpan(snapshot, _typeSpecialType);
+                        }
+                        else
+                        {
+                            switch (span.ClassificationType)
+                            {
+                                case ClassificationTypeNames.StructName:
+                                    yield return span.TextSpan.ToTagSpan(snapshot, _structType);
+                                    break;
+                                case ClassificationTypeNames.ClassName:
+                                    yield return span.TextSpan.ToTagSpan(snapshot, _classType);
+                                    break;
+                                case ClassificationTypeNames.InterfaceName:
+                                    yield return span.TextSpan.ToTagSpan(snapshot, _interfaceType);
+                                    break;
+                                case ClassificationTypeNames.DelegateName:
+                                    yield return span.TextSpan.ToTagSpan(snapshot, _delegateType);
+                                    break;
+                                case ClassificationTypeNames.EnumName:
+                                    yield return span.TextSpan.ToTagSpan(snapshot, _enumType);
+                                    break;
+                            }
                         }
                         break;
                 }
             }
+        }
+
+        private bool IsSpecialType(ISymbol symbol)
+        {
+            var type = (INamedTypeSymbol)symbol;
+            return type.SpecialType != SpecialType.None;
         }
 
         private SyntaxNode GetExpression(SyntaxNode node)

@@ -19,7 +19,7 @@ To change the colors use the regular Visual Studio "Font and Colors" Options. Lo
 * Class properties
 * Local variables
 * Special types (built in)
-* Normal types
+* Normal types: Struct, Class, Delegate, Interface, Enum
 
 The code is fairly simple, but it is not currently written using the Async APIs in Roslyn.
 
