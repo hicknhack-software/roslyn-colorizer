@@ -14,7 +14,6 @@ namespace SemanticColorizer
     {
         public SemanticFieldFormat() {
             DisplayName = "Semantic Field";
-            ForegroundColor = Colors.SaddleBrown;
         }
     }
 
@@ -64,6 +63,18 @@ namespace SemanticColorizer
     {
         public SemanticNormalMethodFormat() {
             DisplayName = "Semantic Normal Method";
+        }
+    }
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = Constants.LocalFunctionFormat)]
+    [Name(Constants.LocalFunctionFormat)]
+    [UserVisible(true)]
+    [Order(After = Priority.Default)]
+    internal sealed class SemanticLocalFunctionFormat : ClassificationFormatDefinition
+    {
+        public SemanticLocalFunctionFormat()
+        {
+            DisplayName = "Semantic Local Function";
         }
     }
 
@@ -143,26 +154,78 @@ namespace SemanticColorizer
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.TypeSpecialFormat)]
-    [Name(Constants.TypeSpecialFormat)]
+    [ClassificationType(ClassificationTypeNames = Constants.ClassFormat)]
+    [Name(Constants.ClassFormat)]
     [UserVisible(true)]
     [Order(After = Priority.Default)]
-    internal sealed class SemanticTypeSpecialFormat : ClassificationFormatDefinition
+    internal sealed class SemanticClassFormat : ClassificationFormatDefinition
     {
-        public SemanticTypeSpecialFormat() {
-            DisplayName = "Semantic Special Type";
+        public SemanticClassFormat() {
+            DisplayName = "Semantic Class";
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.TypeNormalFormat)]
-    [Name(Constants.TypeNormalFormat)]
+    [ClassificationType(ClassificationTypeNames = Constants.InterfaceFormat)]
+    [Name(Constants.InterfaceFormat)]
     [UserVisible(true)]
     [Order(After = Priority.Default)]
-    internal sealed class SemanticTypeNormalFormat : ClassificationFormatDefinition
+    internal sealed class SemanticInterfaceFormat : ClassificationFormatDefinition
     {
-        public SemanticTypeNormalFormat() {
-            DisplayName = "Semantic Normal Type";
+        public SemanticInterfaceFormat() {
+            DisplayName = "Semantic Interface";
+        }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = Constants.EventFormat)]
+    [Name(Constants.EventFormat)]
+    [UserVisible(true)]
+    [Order(After = Priority.Default)]
+    internal sealed class SemanticEventFormat : ClassificationFormatDefinition
+    {
+        public SemanticEventFormat()
+        {
+            DisplayName = "Semantic Event";
+        }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = Constants.StructFormat)]
+    [Name(Constants.StructFormat)]
+    [UserVisible(true)]
+    [Order(After = Priority.Default)]
+    internal sealed class SemanticStructFormat : ClassificationFormatDefinition
+    {
+        public SemanticStructFormat()
+        {
+            DisplayName = "Semantic Struct";
+        }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = Constants.EnumFormat)]
+    [Name(Constants.EnumFormat)]
+    [UserVisible(true)]
+    [Order(After = Priority.Default)]
+    internal sealed class SemanticEnumFormat : ClassificationFormatDefinition
+    {
+        public SemanticEnumFormat()
+        {
+            DisplayName = "Semantic Enum";
+        }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = Constants.DelegateFormat)]
+    [Name(Constants.DelegateFormat)]
+    [UserVisible(true)]
+    [Order(After = Priority.Default)]
+    internal sealed class SemanticDelegateFormat : ClassificationFormatDefinition
+    {
+        public SemanticDelegateFormat()
+        {
+            DisplayName = "Semantic Delegate";
         }
     }
 }
