@@ -35,7 +35,7 @@ namespace SemanticColorizer
 
     class SemanticColorizer : ITagger<IClassificationTag>
     {
-        private static readonly IReadOnlyList<string> SupportedClassificationTypeNames;
+        private static readonly HashSet<string> SupportedClassificationTypeNames;
         private readonly ITextBuffer _theBuffer;
         private readonly IClassificationType _fieldType;
         private readonly IClassificationType _enumFieldType;
@@ -77,7 +77,7 @@ namespace SemanticColorizer
 
         static SemanticColorizer()
         {
-            SupportedClassificationTypeNames = new List<string>
+            SupportedClassificationTypeNames = new HashSet<string>
             {
                 ClassificationTypeNames.ClassName,
                 ClassificationTypeNames.StructName,
@@ -177,6 +177,7 @@ namespace SemanticColorizer
                     case SymbolKind.Field:
                         switch (span.ClassificationType)
                         {
+                            case NewClassificationTypeNames.ConstantName:
                             case NewClassificationTypeNames.FieldName:
                                 yield return span.TextSpan.ToTagSpan(snapshot, _fieldType);
                                 break;
