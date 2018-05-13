@@ -194,12 +194,12 @@ namespace SemanticColorizer
                                 {
                                     yield return span.TextSpan.ToTagSpan(snapshot, _localFunctionType);
                                 }
-                                //static method call
+                                //static method
                                 else if (methodSymbol.MethodKind == MethodKind.Ordinary && methodSymbol.IsStatic)
                                 {
                                     yield return span.TextSpan.ToTagSpan(snapshot, _staticMethodType);
                                 }
-                                //other method call
+                                //any other method
                                 else
                                 {
                                     yield return span.TextSpan.ToTagSpan(snapshot, _normalMethodType);
