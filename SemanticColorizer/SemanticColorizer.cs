@@ -161,6 +161,7 @@ namespace SemanticColorizer
                     case SymbolKind.Field:
                         switch (span.ClassificationType)
                         {
+                            case ClassificationTypeNames.ConstantName:
                             case ClassificationTypeNames.FieldName:
                                 yield return span.TextSpan.ToTagSpan(snapshot, _fieldType);
                                 break;
