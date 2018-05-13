@@ -14,6 +14,7 @@ namespace SemanticColorizer
     {
         public SemanticFieldFormat() {
             DisplayName = "Semantic Field";
+            ForegroundColor = Colors.SaddleBrown;
         }
     }
 
