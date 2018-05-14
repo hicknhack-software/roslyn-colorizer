@@ -87,7 +87,6 @@ namespace SemanticColorizer
                 ClassificationTypeNames.DelegateName,
                 ClassificationTypeNames.EnumName,
                 NewClassificationTypeNames.EnumMemberName,
-                ClassificationTypeNames.Keyword,
                 ClassificationTypeNames.Identifier,
                 NewClassificationTypeNames.EventName,
                 NewClassificationTypeNames.LocalName,
@@ -234,10 +233,7 @@ namespace SemanticColorizer
                         yield return span.TextSpan.ToTagSpan(snapshot, _parameterType);
                         break;
                     case SymbolKind.Namespace:
-                        if (span.ClassificationType != ClassificationTypeNames.Keyword)
-                        {
-                            yield return span.TextSpan.ToTagSpan(snapshot, _namespaceType);
-                        }
+                        yield return span.TextSpan.ToTagSpan(snapshot, _namespaceType);
                         break;
                     case SymbolKind.Property:
                         yield return span.TextSpan.ToTagSpan(snapshot, _propertyType);
