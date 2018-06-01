@@ -1,3 +1,6 @@
+2018-06-01 V1.3.2
+* Fixed keyword issue (thx @Liminiens)
+
 2018-05-14 V1.3.1
 * Fixed VS2017 15.7 compatibility (thx @Liminiens)
 * Detailed classifications of special types
