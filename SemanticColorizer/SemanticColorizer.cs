@@ -44,18 +44,12 @@ namespace SemanticColorizer
         private readonly IClassificationType _normalMethodType;
         private readonly IClassificationType _localFunctionType;
         private readonly IClassificationType _constructorType;
-        private readonly IClassificationType _typeParameterType;
         private readonly IClassificationType _parameterType;
         private readonly IClassificationType _namespaceType;
         private readonly IClassificationType _propertyType;
         private readonly IClassificationType _localType;
         private readonly IClassificationType _typeSpecialType;
         private readonly IClassificationType _eventType;
-        private readonly IClassificationType _classType;
-        private readonly IClassificationType _structType;
-        private readonly IClassificationType _delegateType;
-        private readonly IClassificationType _interfaceType;
-        private readonly IClassificationType _enumType;
         private Cache _cache;
 #pragma warning disable CS0067
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -79,13 +73,8 @@ namespace SemanticColorizer
         {
             SupportedClassificationTypeNames = new HashSet<string>
             {
-                ClassificationTypeNames.ClassName,
-                ClassificationTypeNames.StructName,
                 NewClassificationTypeNames.FieldName,
                 NewClassificationTypeNames.PropertyName,
-                ClassificationTypeNames.InterfaceName,
-                ClassificationTypeNames.DelegateName,
-                ClassificationTypeNames.EnumName,
                 NewClassificationTypeNames.EnumMemberName,
                 ClassificationTypeNames.Identifier,
                 NewClassificationTypeNames.EventName,
@@ -93,7 +82,6 @@ namespace SemanticColorizer
                 NewClassificationTypeNames.ParameterName,
                 NewClassificationTypeNames.ExtensionMethodName,
                 NewClassificationTypeNames.ConstantName,
-                ClassificationTypeNames.TypeParameterName,
                 NewClassificationTypeNames.MethodName
             };
         }
@@ -108,18 +96,12 @@ namespace SemanticColorizer
             _normalMethodType = registry.GetClassificationType(Constants.NormalMethodFormat);
             _localFunctionType = registry.GetClassificationType(Constants.LocalFunctionFormat);
             _constructorType = registry.GetClassificationType(Constants.ConstructorFormat);
-            _typeParameterType = registry.GetClassificationType(Constants.TypeParameterFormat);
             _parameterType = registry.GetClassificationType(Constants.ParameterFormat);
             _namespaceType = registry.GetClassificationType(Constants.NamespaceFormat);
             _propertyType = registry.GetClassificationType(Constants.PropertyFormat);
             _localType = registry.GetClassificationType(Constants.LocalFormat);
             _typeSpecialType = registry.GetClassificationType(Constants.TypeSpecialFormat);
             _eventType = registry.GetClassificationType(Constants.EventFormat);
-            _classType = registry.GetClassificationType(Constants.ClassFormat);
-            _structType = registry.GetClassificationType(Constants.StructFormat);
-            _delegateType = registry.GetClassificationType(Constants.DelegateFormat);
-            _interfaceType = registry.GetClassificationType(Constants.InterfaceFormat);
-            _enumType = registry.GetClassificationType(Constants.EnumFormat);
         }
 
         public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
@@ -226,9 +208,6 @@ namespace SemanticColorizer
                                 break;
                         }
                         break;
-                    case SymbolKind.TypeParameter:
-                        yield return span.TextSpan.ToTagSpan(snapshot, _typeParameterType);
-                        break;
                     case SymbolKind.Parameter:
                         yield return span.TextSpan.ToTagSpan(snapshot, _parameterType);
                         break;
@@ -248,27 +227,6 @@ namespace SemanticColorizer
                         if (IsSpecialType(symbol))
                         {
                             yield return span.TextSpan.ToTagSpan(snapshot, _typeSpecialType);
-                        }
-                        else
-                        {
-                            switch (span.ClassificationType)
-                            {
-                                case ClassificationTypeNames.StructName:
-                                    yield return span.TextSpan.ToTagSpan(snapshot, _structType);
-                                    break;
-                                case ClassificationTypeNames.ClassName:
-                                    yield return span.TextSpan.ToTagSpan(snapshot, _classType);
-                                    break;
-                                case ClassificationTypeNames.InterfaceName:
-                                    yield return span.TextSpan.ToTagSpan(snapshot, _interfaceType);
-                                    break;
-                                case ClassificationTypeNames.DelegateName:
-                                    yield return span.TextSpan.ToTagSpan(snapshot, _delegateType);
-                                    break;
-                                case ClassificationTypeNames.EnumName:
-                                    yield return span.TextSpan.ToTagSpan(snapshot, _enumType);
-                                    break;
-                            }
                         }
                         break;
                 }
