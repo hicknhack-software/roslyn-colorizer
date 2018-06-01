@@ -19,11 +19,14 @@ To change the colors use the regular Visual Studio "Font and Colors" Options. Lo
 * Class properties
 * Local variables
 * Special types (built in)
-* Normal types: Struct, Class, Delegate, Interface, Enum
 
 The code is fairly simple, but it is not currently written using the Async APIs in Roslyn.
 
 This extension works for the first final version of Visual Studio 2015 and all sucessors.
+
+You might want to combine this extension with:
+* Viasfora - color access modifiers, control flow
+* Build in `User Types - *` Display Items - to change color for regular types `class`, `enum`, `delegate` etc.
 
 ## License
 
