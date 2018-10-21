@@ -58,6 +58,10 @@ namespace SemanticColorizer
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.EventFormat)]
         internal static ClassificationTypeDefinition EventType;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.ControlFlowKeywordFormat)]
+        internal static ClassificationTypeDefinition ControlFlowKeywordType;
 #pragma warning restore CS0649
     }
 }

@@ -17,5 +17,6 @@ namespace SemanticColorizer
         public const String LocalFormat = "s.semantic-colorizer.local";
         public const String TypeSpecialFormat = "s.semantic-colorizer.type-special";
         public const String EventFormat = "s.semantic-colorizer.event";
+        public const String ControlFlowKeywordFormat = "s.semantic-colorizer.control-flow-keyword";
     }
 }

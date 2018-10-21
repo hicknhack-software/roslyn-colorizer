@@ -177,4 +177,17 @@ namespace SemanticColorizer
             DisplayName = "Semantic Event";
         }
     }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = Constants.ControlFlowKeywordFormat)]
+    [Name(Constants.ControlFlowKeywordFormat)]
+    [UserVisible(true)]
+    [Order(After = ClassificationTypeNames.Keyword)]
+    internal sealed class SemanticControlFlowKeywordFormat : ClassificationFormatDefinition
+    {
+        public SemanticControlFlowKeywordFormat()
+        {
+            DisplayName = "Semantic Control Flow Keyword";
+        }
+    }
 }
