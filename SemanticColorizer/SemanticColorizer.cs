@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -16,7 +15,6 @@ using VB = Microsoft.CodeAnalysis.VisualBasic;
 
 namespace SemanticColorizer
 {
-
     [Export(typeof(ITaggerProvider))]
     [ContentType("CSharp")]
     [ContentType("Basic")]
@@ -68,8 +66,8 @@ namespace SemanticColorizer
             public const string FieldName = "field name";
             public const string EnumMemberName = "enum member name";
             public const string ConstantName = "constant name";
-            public const string ControlFlowKeywordName = "control flow keyword";
         }
+
         public const MethodKind LocalMethodKind = (MethodKind)17;
 
         static SemanticColorizer()
@@ -85,7 +83,7 @@ namespace SemanticColorizer
                 NewClassificationTypeNames.ParameterName,
                 NewClassificationTypeNames.ExtensionMethodName,
                 NewClassificationTypeNames.ConstantName,
-                NewClassificationTypeNames.ControlFlowKeywordName,
+                NewClassificationTypeNames.MethodName,
             };
         }
 
@@ -145,17 +143,23 @@ namespace SemanticColorizer
         {
             var snapshot = spans[0].Snapshot;
 
-            // Keyword spans:
+            // Control keyword spans:
 
-            foreach (var span in spans) 
+            foreach (var span in spans)
             {
                 var textSpan = TextSpan.FromBounds(span.Start, span.End);
                 var node = doc.SyntaxRoot.FindNode(textSpan);
 
-                var controlFlowTag = GetControlFlowTag(node, snapshot);
+                int controlKeywordCount = node.CountCSharpControlKeywords();
+                if (controlKeywordCount == 0) controlKeywordCount = node.CountVbControlKeywords();
 
-                if (controlFlowTag != null)
-                    yield return controlFlowTag;
+                if (controlKeywordCount > 0) 
+                {
+                    var firstToken = node.GetFirstToken(false);
+                    var lastToken = controlKeywordCount == 1 ? firstToken : node.DescendantTokens().Skip(controlKeywordCount - 1).First();
+
+                    yield return TextSpan.FromBounds(firstToken.Span.Start, lastToken.Span.End).ToTagSpan(snapshot, _controlFlowKeywordType);
+                }
             }
 
             // Identifier spans: 
@@ -165,7 +169,7 @@ namespace SemanticColorizer
             foreach (var span in classifiedSpans) 
             {
                 var node = GetExpression(doc.SyntaxRoot.FindNode(span.TextSpan));
-
+                
                 var symbol = doc.SemanticModel.GetSymbolInfo(node).Symbol;
                 if (symbol == null) symbol = doc.SemanticModel.GetDeclaredSymbol(node);
                 if (symbol == null)
@@ -250,100 +254,6 @@ namespace SemanticColorizer
                         }
                         break;
                 }
-            }
-        }
-
-        private ITagSpan<IClassificationTag> GetControlFlowTag(SyntaxNode node, ITextSnapshot snapshot)
-        {
-            var csKind = node.CSharpKind();
-            var vbKind = node.VbKind();
-                        
-            if (csKind != CSharp.SyntaxKind.None) 
-            {
-                switch (csKind) 
-                {
-                    case CSharp.SyntaxKind.IfStatement:
-                    case CSharp.SyntaxKind.SwitchStatement:
-                    case CSharp.SyntaxKind.CaseSwitchLabel:
-                    case CSharp.SyntaxKind.DefaultSwitchLabel:
-                    case CSharp.SyntaxKind.ForStatement:
-                    case CSharp.SyntaxKind.ForEachStatement:
-                    case CSharp.SyntaxKind.WhileStatement:
-                    case CSharp.SyntaxKind.DoStatement:
-                    case CSharp.SyntaxKind.GotoStatement:
-                    case CSharp.SyntaxKind.ReturnStatement:
-                    case CSharp.SyntaxKind.ThrowStatement:
-                    case CSharp.SyntaxKind.TryStatement:
-                    case CSharp.SyntaxKind.CatchClause:
-                    case CSharp.SyntaxKind.FinallyClause:
-                    case CSharp.SyntaxKind.ContinueStatement:
-                    case CSharp.SyntaxKind.BreakStatement:
-                        return CreateTag(1);
-
-                    case CSharp.SyntaxKind.YieldReturnStatement:
-                    case CSharp.SyntaxKind.YieldBreakStatement:
-                        return CreateTag(2);
-
-                    case CSharp.SyntaxKind.ElseClause:
-                        return ((ElseClauseSyntax)node).Statement is IfStatementSyntax ? CreateTag(2) : CreateTag(1);
-                }
-            }            
-            else if (vbKind != VB.SyntaxKind.None) 
-            {
-                switch (vbKind) 
-                {
-                    case VB.SyntaxKind.IfStatement:
-                    case VB.SyntaxKind.ElseStatement:
-                    case VB.SyntaxKind.SelectStatement:
-                    case VB.SyntaxKind.CaseStatement:
-                    case VB.SyntaxKind.ForStatement:
-                    case VB.SyntaxKind.NextStatement:
-                    case VB.SyntaxKind.WhileStatement:
-                    case VB.SyntaxKind.SimpleDoStatement:
-                    case VB.SyntaxKind.SimpleLoopStatement:
-                    case VB.SyntaxKind.GoToKeyword:
-                    case VB.SyntaxKind.ReturnStatement:
-                    case VB.SyntaxKind.ThrowStatement:
-                    case VB.SyntaxKind.TryStatement:
-                    case VB.SyntaxKind.CatchStatement:
-                    case VB.SyntaxKind.FinallyStatement:
-                    case VB.SyntaxKind.YieldStatement:
-                    case VB.SyntaxKind.EndStatement:
-                        return CreateTag(1);
-
-                    case VB.SyntaxKind.ElseIfStatement:
-                    case VB.SyntaxKind.ExitSelectStatement:
-                    case VB.SyntaxKind.EndSelectStatement:
-                    case VB.SyntaxKind.ForEachStatement:
-                    case VB.SyntaxKind.CaseElseStatement:
-                    case VB.SyntaxKind.ExitForStatement:
-                    case VB.SyntaxKind.ExitWhileStatement:
-                    case VB.SyntaxKind.EndWhileStatement:
-                    case VB.SyntaxKind.ExitDoStatement:
-                    case VB.SyntaxKind.DoWhileStatement:
-                    case VB.SyntaxKind.DoUntilStatement:
-                    case VB.SyntaxKind.ExitTryStatement:
-                    case VB.SyntaxKind.EndTryStatement:
-                    case VB.SyntaxKind.ContinueWhileStatement:
-                    case VB.SyntaxKind.ContinueDoStatement:
-                    case VB.SyntaxKind.ContinueForStatement:
-                    case VB.SyntaxKind.ExitFunctionStatement:
-                    case VB.SyntaxKind.ExitOperatorStatement:
-                    case VB.SyntaxKind.ExitPropertyStatement:
-                    case VB.SyntaxKind.ExitSubStatement:
-                        return CreateTag(2);
-                }
-            }
-
-            return null;
-
-            ITagSpan<IClassificationTag> CreateTag(int numKeywords)
-            {
-                var firstToken = node.GetFirstToken(false);
-                var lastToken = numKeywords == 1 ? firstToken : node.DescendantTokens().Skip(numKeywords - 1).First();
-
-                var desc = node.DescendantTokens();
-                return TextSpan.FromBounds(firstToken.Span.Start, lastToken.Span.End).ToTagSpan(snapshot, _controlFlowKeywordType);
             }
         }
 
