@@ -84,6 +84,7 @@ namespace SemanticColorizer
                 NewClassificationTypeNames.ExtensionMethodName,
                 NewClassificationTypeNames.ConstantName,
                 NewClassificationTypeNames.MethodName,
+                ClassificationTypeNames.Keyword,
             };
         }
 
@@ -141,35 +142,28 @@ namespace SemanticColorizer
               Cache doc,
               NormalizedSnapshotSpanCollection spans)
         {
-            var snapshot = spans[0].Snapshot;
-
-            // Control keyword spans:
-
-            foreach (var span in spans)
-            {
-                var textSpan = TextSpan.FromBounds(span.Start, span.End);
-                var node = doc.SyntaxRoot.FindNode(textSpan);
-
-                int controlKeywordCount = node.CountCSharpControlKeywords();
-                if (controlKeywordCount == 0) controlKeywordCount = node.CountVbControlKeywords();
-
-                if (controlKeywordCount > 0) 
-                {
-                    var firstToken = node.GetFirstToken(false);
-                    var lastToken = controlKeywordCount == 1 ? firstToken : node.DescendantTokens().Skip(controlKeywordCount - 1).First();
-
-                    yield return TextSpan.FromBounds(firstToken.Span.Start, lastToken.Span.End).ToTagSpan(snapshot, _controlFlowKeywordType);
-                }
-            }
-
-            // Identifier spans: 
+            var snapshot = spans[0].Snapshot; 
 
             IEnumerable<ClassifiedSpan> classifiedSpans = GetClassifiedSpans(doc.Workspace, doc.SemanticModel, spans);
 
             foreach (var span in classifiedSpans) 
             {
                 var node = GetExpression(doc.SyntaxRoot.FindNode(span.TextSpan));
-                
+
+                // Control keywords:
+
+                int controlKeywordCount = node.CountCSharpControlKeywords();
+                if (controlKeywordCount == 0) controlKeywordCount = node.CountVbControlKeywords();
+
+                if (controlKeywordCount > 0) {
+                    var firstToken = node.GetFirstToken(false);
+                    var lastToken = controlKeywordCount == 1 ? firstToken : node.DescendantTokens().Skip(controlKeywordCount - 1).First();
+
+                    yield return TextSpan.FromBounds(firstToken.Span.Start, lastToken.Span.End).ToTagSpan(snapshot, _controlFlowKeywordType);
+                }
+
+                // Symbols:
+
                 var symbol = doc.SemanticModel.GetSymbolInfo(node).Symbol;
                 if (symbol == null) symbol = doc.SemanticModel.GetDeclaredSymbol(node);
                 if (symbol == null)
