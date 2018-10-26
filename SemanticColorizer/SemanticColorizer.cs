@@ -154,13 +154,18 @@ namespace SemanticColorizer
 
                 int controlKeywordCount = node.CountCSharpControlKeywords();
                 if (controlKeywordCount == 0) controlKeywordCount = node.CountVbControlKeywords();
-
+                
                 if (controlKeywordCount > 0) {
                     var firstToken = node.GetFirstToken(false);
                     var lastToken = controlKeywordCount == 1 ? firstToken : node.DescendantTokens().Skip(controlKeywordCount - 1).First();
 
                     yield return TextSpan.FromBounds(firstToken.Span.Start, lastToken.Span.End).ToTagSpan(snapshot, _controlFlowKeywordType);
                 }
+
+                // TODO: fix this hack to highlight while keyword in do...while...
+
+                if (node is CSharp.Syntax.DoStatementSyntax doStatement && !doStatement.WhileKeyword.Span.IsEmpty)
+                    yield return doStatement.WhileKeyword.Span.ToTagSpan(snapshot, _controlFlowKeywordType);
 
                 // Symbols:
 
