@@ -1,14 +1,15 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticColorizer", "SemanticColorizer\SemanticColorizer.csproj", "{1EC486EE-EE95-4159-A186-84EDF5B2EC29}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC7EA05A-4257-47E3-A403-D080B0DE096D}"
 	ProjectSection(SolutionItems) = preProject
+		CSTestFile.cs = CSTestFile.cs
 		Global.props = Global.props
 		readme.md = readme.md
-		TestFile.cs = TestFile.cs
+		VBTestFile.vb = VBTestFile.vb
 	EndProjectSection
 EndProject
 Global
@@ -24,5 +25,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FF827C3F-E0BD-429E-ADCF-E0229B191B85}
 	EndGlobalSection
 EndGlobal

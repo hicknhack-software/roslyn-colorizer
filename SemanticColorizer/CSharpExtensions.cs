@@ -11,13 +11,17 @@ namespace SemanticColorizer
             return node.Kind();
         }
 
-        public static int CountCSharpControlKeywords(this SyntaxNode node)
+        public static (int count, object extraKeyword) CountCSharpControlKeywords(this SyntaxNode node)
         {
+            // extraKeyword is an object instead of a 'Nullable<SyntaxToken>' as a minor optimization to avoid
+            // returning a rather large struct every time this method is called. Do/while loops are pretty rare
+            // so the very occasional boxing is goign to be faster
+
             var csKind = node.CSharpKind();
 
-            if (csKind != SyntaxKind.None) 
+            if (csKind != SyntaxKind.None)
             {
-                switch (csKind) 
+                switch (csKind)
                 {
                     case SyntaxKind.IfStatement:
                     case SyntaxKind.SwitchStatement:
@@ -26,7 +30,6 @@ namespace SemanticColorizer
                     case SyntaxKind.ForStatement:
                     case SyntaxKind.ForEachStatement:
                     case SyntaxKind.WhileStatement:
-                    case SyntaxKind.DoStatement:
                     case SyntaxKind.GotoStatement:
                     case SyntaxKind.ReturnStatement:
                     case SyntaxKind.ThrowStatement:
@@ -35,18 +38,24 @@ namespace SemanticColorizer
                     case SyntaxKind.FinallyClause:
                     case SyntaxKind.ContinueStatement:
                     case SyntaxKind.BreakStatement:
-                        return 1;
+                        return (1, null);
 
                     case SyntaxKind.YieldReturnStatement:
                     case SyntaxKind.YieldBreakStatement:
-                        return 2;
+                        return (2, null);
 
                     case SyntaxKind.ElseClause:
-                        return ((ElseClauseSyntax)node).Statement is IfStatementSyntax ? 2 : 1;
+                        return ((ElseClauseSyntax)node).Statement is IfStatementSyntax ? (2, (object)null) : (1, null);
+
+                    case SyntaxKind.DoStatement:
+                        var doStatement = (DoStatementSyntax)node;
+                        var whileKeyword = doStatement.WhileKeyword;
+
+                        return whileKeyword.Span.IsEmpty ? (1, (object)null) : (1, whileKeyword);
                 }
             }
 
-            return 0;
+            return (0, null);
         }
     }
 }

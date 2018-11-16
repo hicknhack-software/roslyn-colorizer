@@ -49,4 +49,48 @@ namespace Test
 
         public int Run(string arg) => throw new NotImplementedException();
     }
+
+    internal class ControlFlow
+    {
+        public IEnumerable<int> Method()
+        {
+            int x = 1;
+            yield return x;
+
+            do {
+                x++;
+            } while (x < 5);
+
+            try {
+                x.ToString();
+            }
+            catch {
+            }
+            finally {
+                while (true) { }
+            }
+
+            if (x == 1)
+                yield return 1;
+            else if (x == 2) {
+                if (x == 0)
+                    throw new Exception("nested");
+
+                yield return 2;
+            }
+            else if (x == 3)
+                yield return 3;
+            else
+
+
+            int y = 5;
+
+            switch (y) {
+                case 1:
+                    yield break;
+                default:
+                    throw new System.Exception();
+            }
+        }
+    }
 }

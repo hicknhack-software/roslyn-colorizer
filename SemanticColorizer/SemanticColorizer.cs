@@ -142,35 +142,34 @@ namespace SemanticColorizer
               Cache doc,
               NormalizedSnapshotSpanCollection spans)
         {
-            var snapshot = spans[0].Snapshot; 
+            var snapshot = spans[0].Snapshot;
 
             IEnumerable<ClassifiedSpan> classifiedSpans = GetClassifiedSpans(doc.Workspace, doc.SemanticModel, spans);
 
-            foreach (var span in classifiedSpans) 
+            foreach (var span in classifiedSpans)
             {
                 var node = GetExpression(doc.SyntaxRoot.FindNode(span.TextSpan));
 
                 // Control keywords:
 
-                int controlKeywordCount = node.CountCSharpControlKeywords();
+                (int controlKeywordCount, object extraKeyword) = node.CountCSharpControlKeywords();
                 if (controlKeywordCount == 0) controlKeywordCount = node.CountVbControlKeywords();
-                
-                if (controlKeywordCount > 0) {
+
+                if (controlKeywordCount > 0)
+                {
                     var firstToken = node.GetFirstToken(false);
                     var lastToken = controlKeywordCount == 1 ? firstToken : node.DescendantTokens().Skip(controlKeywordCount - 1).First();
 
                     yield return TextSpan.FromBounds(firstToken.Span.Start, lastToken.Span.End).ToTagSpan(snapshot, _controlFlowKeywordType);
                 }
 
-                // TODO: fix this hack to highlight while keyword in do...while...
-
-                if (node is CSharp.Syntax.DoStatementSyntax doStatement && !doStatement.WhileKeyword.Span.IsEmpty)
-                    yield return doStatement.WhileKeyword.Span.ToTagSpan(snapshot, _controlFlowKeywordType);
+                if (extraKeyword is SyntaxToken extraKeywordToken)
+                    yield return extraKeywordToken.Span.ToTagSpan(snapshot, _controlFlowKeywordType);
 
                 // Symbols:
 
-                var symbol = doc.SemanticModel.GetSymbolInfo(node).Symbol;
-                if (symbol == null) symbol = doc.SemanticModel.GetDeclaredSymbol(node);
+                var symbol = doc.SemanticModel.GetSymbolInfo(node).Symbol ?? doc.SemanticModel.GetDeclaredSymbol(node);
+
                 if (symbol == null)
                 {
                     continue;
