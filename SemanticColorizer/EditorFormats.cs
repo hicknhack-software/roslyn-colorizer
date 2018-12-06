@@ -99,20 +99,6 @@ namespace SemanticColorizer
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.TypeParameterFormat)]
-    [Name(Constants.TypeParameterFormat)]
-    [UserVisible(true)]
-    [Order(After = ClassificationTypeNames.Identifier)]
-    internal sealed class SemanticTypeParameterFormat : ClassificationFormatDefinition
-    {
-        public SemanticTypeParameterFormat()
-        {
-            DisplayName = "Semantic Type Parameter";
-            ForegroundColor = Colors.SlateGray;
-        }
-    }
-
-    [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.ParameterFormat)]
     [Name(Constants.ParameterFormat)]
     [UserVisible(true)]
@@ -180,32 +166,6 @@ namespace SemanticColorizer
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.ClassFormat)]
-    [Name(Constants.ClassFormat)]
-    [UserVisible(true)]
-    [Order(After = ClassificationTypeNames.Identifier)]
-    internal sealed class SemanticClassFormat : ClassificationFormatDefinition
-    {
-        public SemanticClassFormat()
-        {
-            DisplayName = "Semantic Class";
-        }
-    }
-
-    [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.InterfaceFormat)]
-    [Name(Constants.InterfaceFormat)]
-    [UserVisible(true)]
-    [Order(After = ClassificationTypeNames.Identifier)]
-    internal sealed class SemanticInterfaceFormat : ClassificationFormatDefinition
-    {
-        public SemanticInterfaceFormat()
-        {
-            DisplayName = "Semantic Interface";
-        }
-    }
-
-    [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.EventFormat)]
     [Name(Constants.EventFormat)]
     [UserVisible(true)]
@@ -215,45 +175,6 @@ namespace SemanticColorizer
         public SemanticEventFormat()
         {
             DisplayName = "Semantic Event";
-        }
-    }
-
-    [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.StructFormat)]
-    [Name(Constants.StructFormat)]
-    [UserVisible(true)]
-    [Order(After = ClassificationTypeNames.Identifier)]
-    internal sealed class SemanticStructFormat : ClassificationFormatDefinition
-    {
-        public SemanticStructFormat()
-        {
-            DisplayName = "Semantic Struct";
-        }
-    }
-
-    [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.EnumFormat)]
-    [Name(Constants.EnumFormat)]
-    [UserVisible(true)]
-    [Order(After = ClassificationTypeNames.Identifier)]
-    internal sealed class SemanticEnumFormat : ClassificationFormatDefinition
-    {
-        public SemanticEnumFormat()
-        {
-            DisplayName = "Semantic Enum";
-        }
-    }
-
-    [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.DelegateFormat)]
-    [Name(Constants.DelegateFormat)]
-    [UserVisible(true)]
-    [Order(After = ClassificationTypeNames.Identifier)]
-    internal sealed class SemanticDelegateFormat : ClassificationFormatDefinition
-    {
-        public SemanticDelegateFormat()
-        {
-            DisplayName = "Semantic Delegate";
         }
     }
 }
