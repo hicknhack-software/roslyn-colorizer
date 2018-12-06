@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="SemanticColorizer..675719A2-3029-4ADD-8A0C-912336B31716" Version="1.3.2" Language="en-US" Publisher="HicknHack Software GmbH" />
+        <Identity Id="SemanticColorizer..675719A2-3029-4ADD-8A0C-912336B31716" Version="1.3.3" Language="en-US" Publisher="HicknHack Software GmbH" />
         <DisplayName>SemanticColorizer</DisplayName>
         <Description xml:space="preserve">A semantic syntax classifier extension based on Roslyn for C# and Visual Basic.</Description>
         <MoreInfo>https://github.com/hicknhack-software/semantic-colorizer</MoreInfo>
