@@ -50,6 +50,11 @@ namespace SemanticColorizer
         private readonly IClassificationType _localType;
         private readonly IClassificationType _typeSpecialType;
         private readonly IClassificationType _eventType;
+
+        // Built in VS by default
+        private readonly IClassificationType _builtInClassType;
+        private readonly IClassificationType _builtInStructType;
+
         private Cache _cache;
 #pragma warning disable CS0067
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -77,6 +82,7 @@ namespace SemanticColorizer
                 NewClassificationTypeNames.PropertyName,
                 NewClassificationTypeNames.EnumMemberName,
                 ClassificationTypeNames.Identifier,
+                ClassificationTypeNames.Keyword,
                 NewClassificationTypeNames.EventName,
                 NewClassificationTypeNames.LocalName,
                 NewClassificationTypeNames.ParameterName,
@@ -102,6 +108,10 @@ namespace SemanticColorizer
             _localType = registry.GetClassificationType(Constants.LocalFormat);
             _typeSpecialType = registry.GetClassificationType(Constants.TypeSpecialFormat);
             _eventType = registry.GetClassificationType(Constants.EventFormat);
+
+            // Built in VS by default
+            _builtInClassType = registry.GetClassificationType(Constants.BuiltInClassTypeFormat);
+            _builtInStructType = registry.GetClassificationType(Constants.BuildInStructTypeFormat);
         }
 
         public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
@@ -224,9 +234,31 @@ namespace SemanticColorizer
                         yield return span.TextSpan.ToTagSpan(snapshot, _eventType);
                         break;
                     case SymbolKind.NamedType:
-                        if (IsSpecialType(symbol))
+                        switch (span.ClassificationType)
                         {
-                            yield return span.TextSpan.ToTagSpan(snapshot, _typeSpecialType);
+                            case ClassificationTypeNames.Keyword:
+                                if (node.IsCSharpPredefinedTypeSyntax())
+                                {
+                                    var type = (INamedTypeSymbol)symbol;
+                                    if (type.SpecialType == SpecialType.System_Void)
+                                        continue;
+                                    if (type.TypeKind == TypeKind.Struct)
+                                    {
+                                        yield return span.TextSpan.ToTagSpan(snapshot, _builtInStructType);
+                                    }
+                                    if (type.TypeKind == TypeKind.Class)
+                                    {
+                                        yield return span.TextSpan.ToTagSpan(snapshot, _builtInClassType);
+                                    }
+                                }
+                                break;
+                            default:
+                                if (IsSpecialType(symbol))
+                                {
+                                    yield return span.TextSpan.ToTagSpan(snapshot, _typeSpecialType);
+                                }
+                                break;
+
                         }
                         break;
                 }
