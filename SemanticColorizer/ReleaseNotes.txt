@@ -1,3 +1,7 @@
+2022-01-09 V1.4.0
+* Added VS2022 support (thx @darress)
+* Colorize struct/class type keywords (thx @darress)
+
 2018-06-01 V1.3.2
 * Fixed keyword issue (thx @Liminiens)
 
